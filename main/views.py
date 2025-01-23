@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Song
+from .models import Song, Playlist
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
@@ -61,3 +61,33 @@ def logout_user(request):
     logout(request)
     print("Successfully logged out!!!")
     return redirect('index')
+
+def create_playlist(request):
+    if request.method == "POST":
+        name_playlist = request.POST.get("name-playlist")
+
+        if request.user.is_authenticated:
+            create_playlist = Playlist.objects.create(name=name_playlist, user=request.user)
+            create_playlist.save()
+            return redirect("index")
+
+        else:
+            return redirect('index')
+        
+    return render(request, 'main/create_playlist.html')
+
+def view_playlist(request, pk):
+    if request.user.is_authenticated:
+        playlist = Playlist.objects.get(id=pk, user=request.user)
+        return render(request, 'main/view_playlist.html', {"playlist": playlist})
+    
+    else:
+        return redirect('index')
+        
+def all_playlists(request):
+    if request.user.is_authenticated:
+        playlists = Playlist.objects.filter(user=request.user)
+        return render(request, 'main/all_playlists.html', {"playlists": playlists})
+
+    else:
+        return redirect('index')
