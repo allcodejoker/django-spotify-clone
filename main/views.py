@@ -89,7 +89,19 @@ def create_playlist(request):
 def view_playlist(request, pk):
     if request.user.is_authenticated:
         playlist = Playlist.objects.get(id=pk, user=request.user)
-        return render(request, 'main/view_playlist.html', {"playlist": playlist})
+        play_song_id = request.GET.get('play', None)
+        play_song = None
+        next_song = None
+
+        if play_song_id:
+            play_song = Song.objects.get(id=play_song_id)
+            playlist_list = list(playlist.song.all())
+            if play_song in playlist_list:
+                current_index = playlist_list.index(play_song)
+                if current_index + 1 < len(playlist_list):
+                    next_song = playlist_list[current_index+1]
+
+        return render(request, 'main/view_playlist.html', {"playlist": playlist, "next_song": next_song, "play_song": play_song})
     
     else:
         return redirect('index')
