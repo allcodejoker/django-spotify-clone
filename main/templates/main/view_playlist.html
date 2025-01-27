@@ -4,6 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ playlist.name }}</title>
+    <style>
+        .hidden-player {
+            position: absolute;
+            left: 9999999px;
+        }
+        .play-button {
+            padding: 10px 20px;
+            background-color: green;
+            color: white;
+            border: none;
+            margin-bottom: 10px;
+        }
+        .song-list {
+            margin-top: 20px;
+            display: grid;
+            place-items: center;
+        }
+    </style>
 </head>
 <body>
     <h2>Playlist: {{ playlist.name }}</h2>
@@ -12,8 +30,24 @@
     <ul>
         {% for song in playlist.song.all %}
             <li>{{ song.title }} - {{ song.artist }}</li>
+            <a href="?play={{ song.id }}">
+                <button class="play-button">Play</button>
+            </a>
         {% endfor %}
     </ul>
+
+    {% if play_song %}
+        <iframe class="hidden-player" src="{{ play_song.youtube_url_modify }}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <p>Now Playing: {{ play_song.title }} - {{ play_song.artist }}</p>
+        {% if next_song %}
+            <a href="?play={{ next_song.id }}">
+                <button class="play-button">Play Next: {{ next_song.title }} - {{ next_song.artist }}</button>
+            </a>
+        {% endif %}
+
+    {% else %}
+        <p>Click Play Button Now!!!</p>
+    {% endif %}
 
 </body>
 </html>
