@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Song, Playlist
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from random import choice
 
 # Create your views here.
 
@@ -90,22 +91,36 @@ def view_playlist(request, pk):
     if request.user.is_authenticated:
         playlist = Playlist.objects.get(id=pk, user=request.user)
         play_song_id = request.GET.get('play', None)
+        shuffle = request.GET.get('shuffle', 'false') == 'true'
         play_song = None
         next_song = None
 
+        playlist_list = list(playlist.song.all())
+        
         if play_song_id:
             play_song = Song.objects.get(id=play_song_id)
-            playlist_list = list(playlist.song.all())
+        
+        if shuffle and playlist_list:
+            possible_songs = []
+
+            for song in playlist_list:
+                if song != play_song:
+                    possible_songs.append(song)
+
+            if possible_songs:
+                next_song = choice(possible_songs)
+
+        else:
             if play_song in playlist_list:
                 current_index = playlist_list.index(play_song)
-                if current_index + 1 < len(playlist_list):
-                    next_song = playlist_list[current_index+1]
+                loop_playlist = (current_index + 1) % len(playlist_list)
+                next_song = playlist_list[loop_playlist]
 
-        return render(request, 'main/view_playlist.html', {"playlist": playlist, "next_song": next_song, "play_song": play_song})
+        return render(request, 'main/view_playlist.html', {"playlist": playlist, "next_song": next_song, "play_song": play_song, "shuffle": shuffle})
     
     else:
         return redirect('index')
-        
+
 def all_playlists(request):
     if request.user.is_authenticated:
         playlists = Playlist.objects.filter(user=request.user)
