@@ -26,11 +26,19 @@
 <body>
     <h2>Playlist: {{ playlist.name }}</h2>
 
+    <form method="GET">
+        <input type="hidden" name="play" value="{% if play_song %}{{ play_song.id }}{% endif %}">
+        <input type="hidden" name="shuffle" value="{% if shuffle %}false{% else %}true{% endif %}" >
+        <button type="submit">
+            {% if shuffle %} Disable Shuffle {% else %} Enable Shuffle {% endif %}
+        </button>
+    </form>
+
     <h3>Songs:</h3>
     <ul>
         {% for song in playlist.song.all %}
             <li>{{ song.title }} - {{ song.artist }}</li>
-            <a href="?play={{ song.id }}">
+            <a href="?play={{ song.id }}&shuffle={{ shuffle }}">
                 <button class="play-button">Play</button>
             </a>
         {% endfor %}
@@ -40,7 +48,7 @@
         <iframe class="hidden-player" src="{{ play_song.youtube_url_modify }}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <p>Now Playing: {{ play_song.title }} - {{ play_song.artist }}</p>
         {% if next_song %}
-            <a href="?play={{ next_song.id }}">
+            <a href="?play={{ next_song.id }}&shuffle={{ shuffle }}">
                 <button class="play-button">Play Next: {{ next_song.title }} - {{ next_song.artist }}</button>
             </a>
         {% endif %}
