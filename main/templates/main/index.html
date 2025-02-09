@@ -1,8 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+{% extends 'main/base.html' %}
+
+{% block heading %}
     <title>All Code Joker - Spotify Clone</title>
     <style>
         .hidden-player {
@@ -22,8 +21,9 @@
             place-items: center;
         }
     </style>
-</head>
-<body>
+{% endblock %}
+
+{% block body %}
     <div class="song-list">
         {% for song in songs %}
             <h3>{{ song.title }}</h3>
@@ -43,8 +43,6 @@
             </form>
             <br>
             <img style="width: 300px;" src="{{ song.cover_image.url }}" alt="">
-
-
         {% endfor %}
     </div>
 
@@ -52,5 +50,4 @@
         <iframe class="hidden-player" src="{{ play_song.youtube_url_modify }}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     {% endif %}
 
-</body>
-</html>
+{% endblock %}
