@@ -10,16 +10,19 @@ def index(request):
     songs = Song.objects.all()
     play_song_id = request.GET.get('play', None)
     play_song = None
-    playlists = Playlist.objects.filter(user=request.user)
+    playlists = Playlist.objects.none()
 
-    if request.method == "POST":
-        song_id = request.POST.get('song_id')
-        playlist_id = request.POST.get('playlist_id')
+    if request.user.is_authenticated:
+        playlists = Playlist.objects.filter(user=request.user)
 
-        if song_id and playlist_id:
-            playlist = Playlist.objects.get(id=playlist_id, user=request.user)
-            song = Song.objects.get(id=song_id)
-            playlist.song.add(song)
+        if request.method == "POST":
+            song_id = request.POST.get('song_id')
+            playlist_id = request.POST.get('playlist_id')
+
+            if song_id and playlist_id:
+                playlist = Playlist.objects.get(id=playlist_id, user=request.user)
+                song = Song.objects.get(id=song_id)
+                playlist.song.add(song)
 
     if play_song_id:
         play_song = get_object_or_404(Song, id=play_song_id)
