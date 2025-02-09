@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends 'main/base.html' %}
+
+{% block heading %}
     <title>Login Today!</title>
-</head>
-<body>
-    <form method="post">
+{% endblock %}
+
+{% block body %}
+    <form method="post" class="authentication-form">
         {% csrf_token %}
         <input placeholder="Username" type="text" name="username" required>
         <input placeholder="Password" type="password" name="password" required>
         <button type="submit">Login</button>
     </form>
-</body>
-</html>
+{% endblock %}
